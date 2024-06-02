@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shake/shake.dart';
 import 'package:shake_count_app/red_box.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -23,7 +24,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   // implements 상속을 받아 버리면 해당 클래스의 모든 함수를 오버라이드 해야 하므로 with 로 받음. (믹싱 형태로 구현)
-  int _counter = 0;
+  RxInt _counter = RxInt(0);
 
   // 1. nullable
   // ShakeDetector? detector;
