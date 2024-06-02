@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shake/shake.dart';
+import 'package:shake_count_app/red_box.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -19,16 +21,20 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver { // implements 상속을 받아 버리면 해당 클래스의 모든 함수를 오버라이드 해야 하므로 with 로 받음. (믹싱 형태로 구현)
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+  // implements 상속을 받아 버리면 해당 클래스의 모든 함수를 오버라이드 해야 하므로 with 로 받음. (믹싱 형태로 구현)
   int _counter = 0;
+
   // 1. nullable
   // ShakeDetector? detector;
   // 2. late 키워드
   late ShakeDetector detector;
 
   @override
-  void initState() { // state 가 초기화 되는 initState
-    WidgetsBinding.instance.addObserver(this); //옵저버가 확인하는 객체는 WidgetsBindingObserver
+  void initState() {
+    // state 가 초기화 되는 initState
+    WidgetsBinding.instance
+        .addObserver(this); //옵저버가 확인하는 객체는 WidgetsBindingObserver
 
     detector = ShakeDetector.autoStart(
       onPhoneShake: () {
@@ -41,10 +47,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver { /
     super.initState();
   }
 
-
   @override
-  void dispose() { // state가 사라질 때 호출 되는 dispose 함수
-    WidgetsBinding.instance.removeObserver(this); // state가 사라졌을 때 더이상 관찰하지 않도록 하는 작업.
+  void dispose() {
+    // state가 사라질 때 호출 되는 dispose 함수
+    WidgetsBinding.instance
+        .removeObserver(this); // state가 사라졌을 때 더이상 관찰하지 않도록 하는 작업.
     super.dispose();
   }
 
@@ -96,8 +103,32 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver { /
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              '흔들어서 카운트를 올려보세요.',
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const RedBox(),
+                Column(
+                  children: [
+                    const RedBox().box.padding(const EdgeInsets.all(30)).color(Colors.blue).make(),
+                    '흔들어서 카운트를 올려보세요.'
+                        .text
+                        .size(20)
+                        .color(Colors.red)
+                        .bold
+                        .isIntrinsic
+                        .makeCentered()
+                        .box
+                        .withRounded(value: 50)
+                        .color(Colors.green)
+                        .height(150)
+                        .size(70, 70)
+                        .make()
+                        .pSymmetric(h: 20, v: 50),
+                    const RedBox(),
+                  ],
+                ),
+                const RedBox(),
+              ],
             ),
             Text(
               '$_counter',
@@ -116,8 +147,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver { /
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch(state) {
-
+    switch (state) {
       case AppLifecycleState.detached:
         break;
       case AppLifecycleState.resumed:
@@ -127,10 +157,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver { /
         break;
       case AppLifecycleState.hidden:
         break;
-      case AppLifecycleState.paused: // 앱이 화면에서 사라졌을 때 detector.stopListening 함수 호출
+      case AppLifecycleState
+            .paused: // 앱이 화면에서 사라졌을 때 detector.stopListening 함수 호출
         detector.stopListening();
         break;
     }
-
   }
 }
