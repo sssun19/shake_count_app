@@ -19,14 +19,18 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver { // implements 상속을 받아 버리면 해당 클래스의 모든 함수를 오버라이드해야하므로 with 로 받음. (믹싱 형태로 구현)
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver { // implements 상속을 받아 버리면 해당 클래스의 모든 함수를 오버라이드 해야 하므로 with 로 받음. (믹싱 형태로 구현)
   int _counter = 0;
+  // 1. nullable
+  // ShakeDetector? detector;
+  // 2. late 키워드
+  late ShakeDetector detector;
 
   @override
-  void initState() {
+  void initState() { // state 가 초기화 되는 initState
     WidgetsBinding.instance.addObserver(this); //옵저버가 확인하는 객체는 WidgetsBindingObserver
 
-    ShakeDetector detector = ShakeDetector.autoStart(
+    detector = ShakeDetector.autoStart(
       onPhoneShake: () {
         setState(() {
           _counter++;
@@ -39,8 +43,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver { /
 
 
   @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+  void dispose() { // state가 사라질 때 호출 되는 dispose 함수
+    WidgetsBinding.instance.removeObserver(this); // state가 사라졌을 때 더이상 관찰하지 않도록 하는 작업.
     super.dispose();
   }
 
@@ -112,6 +116,21 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver { /
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch(state) {
+
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        detector.startListening();
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.hidden:
+        break;
+      case AppLifecycleState.paused: // 앱이 화면에서 사라졌을 때 detector.stopListening 함수 호출
+        detector.stopListening();
+        break;
+    }
 
   }
 }
